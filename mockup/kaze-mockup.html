@@ -1,0 +1,1604 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kaze — App-Blocker Mockup</title>
+<style>
+  :root{
+    /* Japanese Minimal: Washi-Papier, Sumi-Tusche, Zinnober-Siegel */
+    --ground:#F5F2EA;
+    --card:#FBF9F3;
+    --ink:#211E19;
+    --ink-soft:#6E675C;
+    --line:#E0DACB;
+    --accent:#B5442C;
+    --accent-ink:#933723;
+    --night:#1C1A16;
+    --night-2:#2A2721;
+    --night-ink:#EDE8DC;
+    --night-soft:#948D7E;
+    --amber:#C1502F;
+    --good:#5A7D5A;
+    --danger:#A6402E;
+    --phone-shell:#14120E;
+    --app-bg:#F4F1E8;
+    --app-card:#FCFAF4;
+    --app-ink:#211E19;
+    --app-soft:#7A7365;
+    --app-line:#E5DFD0;
+    --shadow:0 20px 50px rgba(30,26,18,.14);
+    --serif:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Source Serif 4",Georgia,serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ground:#171511; --card:#1E1B16; --ink:#EAE5DA; --ink-soft:#A39B8C;
+      --line:#33302A; --accent:#C9563C; --accent-ink:#D8735C;
+      --shadow:0 20px 50px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#F5F2EA; --card:#FBF9F3; --ink:#211E19; --ink-soft:#6E675C;
+    --line:#E0DACB; --accent:#B5442C; --accent-ink:#933723;
+    --shadow:0 20px 50px rgba(30,26,18,.14);
+  }
+  :root[data-theme="dark"]{
+    --ground:#171511; --card:#1E1B16; --ink:#EAE5DA; --ink-soft:#A39B8C;
+    --line:#33302A; --accent:#C9563C; --accent-ink:#D8735C;
+    --shadow:0 20px 50px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:48px 28px 80px}
+
+  /* ---------- Header ---------- */
+  .eyebrow{
+    font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--accent-ink);font-weight:600;margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--serif);
+    font-size:clamp(34px,5vw,50px);line-height:1.1;margin:0 0 14px;
+    font-weight:500;letter-spacing:.01em;text-wrap:balance;
+  }
+  h1 .hanko{
+    display:inline-flex;align-items:center;justify-content:center;
+    vertical-align:middle;width:.92em;height:.92em;margin:0 .22em .1em .16em;
+    background:var(--accent);color:#F5F2EA;border-radius:.08em;
+    font-size:.52em;font-weight:500;font-family:var(--serif);
+  }
+  .lede{
+    font-family:var(--serif);font-style:normal;
+    font-size:18px;color:var(--ink-soft);max-width:58ch;margin:0 0 8px;
+    line-height:1.65;
+  }
+  .meta-line{font-size:13px;color:var(--ink-soft);margin:0 0 48px}
+
+  /* ---------- Layout ---------- */
+  .board{display:grid;grid-template-columns:minmax(340px,420px) 1fr;gap:56px;align-items:start}
+  @media (max-width:900px){.board{grid-template-columns:1fr;gap:44px}}
+  .device-col{position:sticky;top:32px}
+  @media (max-width:900px){.device-col{position:static;display:flex;flex-direction:column;align-items:center}}
+
+  /* ---------- Phone ---------- */
+  .phone{
+    width:340px;height:704px;margin:0 auto;
+    background:var(--phone-shell);
+    border-radius:54px;padding:12px;
+    box-shadow:var(--shadow), inset 0 0 0 2px #2a2d38;
+    position:relative;
+  }
+  .screen{
+    width:100%;height:100%;border-radius:43px;overflow:hidden;position:relative;
+    background:var(--app-bg);
+  }
+  .island{
+    position:absolute;top:22px;left:50%;transform:translateX(-50%);
+    width:108px;height:30px;border-radius:20px;background:#000;z-index:40;
+  }
+  .statusbar{
+    position:absolute;top:0;left:0;right:0;height:54px;z-index:30;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 30px 0;font-size:14px;font-weight:600;color:var(--app-ink);
+    pointer-events:none;
+  }
+  .statusbar .cell{display:flex;gap:5px;align-items:center;font-size:12px}
+  .homebar{
+    position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+    width:120px;height:5px;border-radius:3px;background:rgba(0,0,0,.28);z-index:40;
+  }
+  .phone[data-dark-status="1"] .statusbar{color:var(--night-ink)}
+  .phone[data-dark-status="1"] .homebar{background:rgba(255,255,255,.35)}
+
+  .scr{
+    position:absolute;inset:0;padding:64px 20px 34px;overflow-y:auto;
+    opacity:0;pointer-events:none;transition:opacity .28s ease;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .scr.on{opacity:1;pointer-events:auto}
+  /* Flex-Kinder duerfen nicht schrumpfen — bei Ueberlaenge wird gescrollt statt gequetscht */
+  .scr > *{flex-shrink:0}
+  .scr.nightmode{
+    background:var(--night);color:var(--night-ink);
+    --tickc:rgba(255,255,255,.15);
+    --barbg:rgba(255,255,255,.12);
+  }
+  /* Heller Modus für die Sperr-Screens: gleiche Struktur, Washi statt Tusche */
+  .phone[data-appmode="light"] .scr.nightmode{
+    --night:#F4F1E8;
+    --night-2:#EAE5D6;
+    --night-ink:#211E19;
+    --night-soft:#7A7365;
+    --tickc:rgba(33,30,25,.18);
+    --barbg:rgba(33,30,25,.12);
+  }
+  .phone[data-appmode="light"] .statusbar{color:var(--app-ink) !important}
+  .phone[data-appmode="light"] .homebar{background:rgba(0,0,0,.28) !important}
+  @media (prefers-reduced-motion: reduce){
+    .scr,.sheet,.appicon,.bigbtn,.sl-knob,.tile .appicon{transition:none !important;animation:none !important}
+  }
+
+  /* ---------- In-app typography ---------- */
+  .app-title{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--app-ink);margin:2px 0 0}
+  .app-sub{font-size:13px;color:var(--app-soft);margin:0}
+  .sec-label{
+    font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--app-soft);margin:8px 2px 0;
+  }
+  .nightmode .sec-label{color:var(--night-soft)}
+  .nightmode .app-title{font-family:var(--serif);font-weight:500;letter-spacing:.01em}
+
+  /* ---------- Setup ---------- */
+  .b-head{margin-top:2px;position:relative}
+  /* Kanji-Wasserzeichen: gross, dezent, auf jedem Screen.
+     position:sticky + Hoehe 0: klebt beim Scrollen rechts oben fest,
+     nimmt keinen Platz im Fluss ein (margin-top kompensiert das Flex-gap). */
+  .wm{
+    position:sticky;top:6px;z-index:0;
+    height:0;overflow:visible;align-self:flex-end;flex-shrink:0;
+    margin-top:-14px;
+    pointer-events:none;user-select:none;
+    font-family:var(--serif);line-height:1;
+    color:rgba(33,30,25,.075);
+  }
+  .scr.nightmode .wm{color:rgba(237,232,220,.08)}
+  .phone[data-appmode="light"] .scr.nightmode .wm{color:rgba(33,30,25,.075)}
+  .wm-top{font-size:150px}
+  /* vertikal gesetzt: schmale Spalte erzwingt ein Zeichen pro Zeile
+     (robuster als writing-mode in der Hoehe-0-Sticky-Box) */
+  .wm-vert{
+    font-size:156px;line-height:1.04;width:156px;
+    word-break:break-all;text-align:center;margin-right:2px;
+  }
+  .b-mark{
+    font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--amber);margin:0 0 10px;
+  }
+  /* Splash */
+  .sp-seal{
+    width:84px;height:84px;border-radius:8px;background:var(--amber);
+    color:#F5F2EA;display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-size:46px;
+  }
+  .sp-name{
+    font-size:15px;letter-spacing:.34em;text-indent:.34em;
+    color:var(--night-ink);margin:0;font-weight:600;
+  }
+  .sp-de{font-size:12px;color:var(--night-soft);margin:-10px 0 0;letter-spacing:.05em}
+  .sp-footer{
+    position:absolute;bottom:42px;left:0;right:0;
+    display:flex;flex-direction:column;align-items:center;gap:7px;
+    font-size:11px;color:var(--night-soft);
+  }
+  .sp-from{display:flex;align-items:center;gap:7px}
+  .sp-from b{color:var(--night-ink);font-weight:600}
+  .sp-lic a{color:var(--amber);text-decoration:none}
+  .brandfoot{
+    display:flex;align-items:center;gap:10px;justify-content:center;
+    font-size:11.5px;color:var(--app-soft);padding:6px 0 2px;line-height:1.5;
+  }
+  .brandfoot b{color:var(--app-ink);font-weight:600}
+  .brandfoot a{color:var(--amber);text-decoration:none}
+
+  /* Zeichen-Glossar ("Woher der Wind weht") */
+  .kanji-list{display:flex;flex-direction:column;margin-top:4px}
+  .kanji-row{
+    display:flex;gap:14px;padding:13px 2px;align-items:flex-start;
+    border-bottom:1px solid var(--app-line);
+  }
+  .kanji-row:last-child{border-bottom:none}
+  .kr-kj{
+    font-family:var(--serif);font-size:34px;line-height:1.15;
+    color:var(--app-ink);flex:0 0 54px;text-align:center;
+  }
+  .kr-body b{font-size:13.5px;color:var(--app-ink);font-weight:600}
+  .kr-body p{margin:2px 0 0;font-size:12.5px;color:var(--app-soft);line-height:1.55}
+  .b-q{
+    font-family:var(--serif);
+    font-size:27px;font-weight:400;letter-spacing:.005em;line-height:1.22;
+    color:var(--app-ink);margin:0;text-wrap:balance;
+  }
+  .tilegrid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px 10px;
+    padding:4px 2px;
+  }
+  .tile{
+    display:flex;flex-direction:column;align-items:center;gap:7px;
+    cursor:pointer;user-select:none;-webkit-user-select:none;
+  }
+  .appicon{
+    width:38px;height:38px;border-radius:9px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:13px;letter-spacing:.02em;
+  }
+  .tile .appicon{
+    width:54px;height:54px;border-radius:13px;font-size:16px;
+    opacity:.4;filter:saturate(.65);transition:all .18s ease;position:relative;
+  }
+  .tile[data-sel="1"] .appicon{
+    opacity:1;filter:none;
+    box-shadow:0 0 0 3px var(--app-bg), 0 0 0 5.5px var(--amber);
+  }
+  .tile[data-sel="1"] .appicon::after{
+    content:"";position:absolute;right:-8px;top:-8px;width:18px;height:18px;
+    border-radius:50%;background:var(--amber);
+    box-shadow:0 0 0 2.5px var(--app-bg);
+  }
+  .tile[data-sel="1"] .appicon::before{
+    content:"";position:absolute;right:-3.5px;top:-4px;width:4px;height:8px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg);z-index:1;
+  }
+  .tile .tname{font-size:11px;color:var(--app-soft);font-weight:500}
+  .tile[data-sel="1"] .tname{color:var(--app-ink);font-weight:600}
+  .tile.add .appicon{
+    background:transparent;border:1.5px dashed #C4BCAA;color:#958D7B;
+    font-size:24px;font-weight:400;opacity:1;filter:none;
+  }
+  .tile[data-locked="1"]{cursor:default}
+  .tile[data-locked="1"] .appicon{opacity:.3;filter:grayscale(.7)}
+  .tile[data-locked="1"] .appicon::after{
+    content:"";position:absolute;right:-6px;bottom:-6px;width:16px;height:16px;
+    border-radius:50%;background:var(--amber);box-shadow:0 0 0 2.5px var(--app-bg);
+    top:auto;
+  }
+  .tile[data-locked="1"] .tname{color:var(--accent-ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+  .b-hours{display:flex;align-items:baseline;gap:8px;justify-content:space-between}
+  .b-hours .num{
+    font-size:44px;font-weight:200;letter-spacing:-.03em;color:var(--app-ink);
+    font-variant-numeric:tabular-nums;line-height:1;
+  }
+  .b-hours .num small{font-size:17px;font-weight:500;color:var(--app-soft);letter-spacing:0}
+  .b-hours .endsat{font-size:12px;color:var(--app-soft);font-variant-numeric:tabular-nums}
+  .b-range{
+    -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;
+    background:#DDD6C6;outline:none;margin:6px 0 2px;
+  }
+  .b-range::-webkit-slider-thumb{
+    -webkit-appearance:none;width:26px;height:26px;border-radius:50%;
+    background:#fff;border:2.5px solid var(--amber);
+    box-shadow:0 2px 6px rgba(0,0,0,.18);cursor:pointer;
+  }
+  .b-range::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:#fff;
+    border:2.5px solid var(--amber);box-shadow:0 2px 6px rgba(0,0,0,.18);cursor:pointer;
+  }
+  .b-scale{display:flex;justify-content:space-between;font-size:10px;color:var(--app-soft);padding:0 4px}
+
+  .slidelock{
+    position:relative;height:58px;border-radius:29px;background:var(--night);
+    margin-top:auto;overflow:hidden;flex:0 0 auto;
+  }
+  .slidelock .sl-text{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.65);font-size:15px;font-weight:600;pointer-events:none;
+    padding-left:34px;
+  }
+  .slidelock .sl-knob{
+    position:absolute;left:5px;top:5px;width:48px;height:48px;border-radius:50%;
+    background:var(--amber);color:#2A1A05;display:flex;align-items:center;
+    justify-content:center;font-size:20px;font-weight:700;cursor:grab;
+    touch-action:none;transition:transform .25s ease;z-index:2;
+  }
+  .slidelock .sl-knob.drag{transition:none;cursor:grabbing}
+  .slidelock[data-off="1"]{opacity:.4}
+  .slidelock[data-off="1"] .sl-knob{cursor:default}
+  .b-caption{font-size:11.5px;color:var(--app-soft);text-align:center;margin:0}
+
+  /* ---------- Sheets ---------- */
+  .sheet-dim{
+    position:absolute;inset:0;background:rgba(12,14,22,.45);z-index:50;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;border-radius:43px;
+  }
+  .sheet-dim.on{opacity:1;pointer-events:auto}
+  .sheet{
+    position:absolute;left:0;right:0;bottom:0;z-index:51;
+    background:var(--app-bg);border-radius:28px 28px 43px 43px;
+    padding:22px 20px 40px;transform:translateY(105%);transition:transform .32s cubic-bezier(.3,.9,.3,1);
+    max-height:80%;display:flex;flex-direction:column;
+  }
+  .sheet-dim.on .sheet{transform:translateY(0)}
+  .sheet h3{margin:4px 0 6px;font-size:19px;font-weight:700;color:var(--app-ink)}
+  .grab{width:38px;height:4px;border-radius:2px;background:#C9CBD3;margin:0 auto 14px;flex:0 0 auto}
+  .kzcard{background:var(--app-card);border-radius:10px;border:1px solid var(--app-line);overflow:hidden}
+  .app-row{
+    display:flex;align-items:center;gap:12px;padding:11px 14px;
+    border-bottom:1px solid var(--app-line);cursor:pointer;user-select:none;
+    -webkit-user-select:none;
+  }
+  .app-row:last-child{border-bottom:none}
+  .app-row .nm{flex:1;font-size:15px;font-weight:500;color:var(--app-ink)}
+  .tick{
+    width:24px;height:24px;border-radius:50%;border:2px solid #CFC8B8;
+    flex:0 0 auto;position:relative;transition:all .15s ease;
+  }
+  .app-row[data-sel="1"] .tick{background:var(--amber);border-color:var(--amber)}
+  .app-row[data-sel="1"] .tick::after{
+    content:"";position:absolute;left:7px;top:3.5px;width:5px;height:10px;
+    border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(42deg);
+  }
+  .picker-list{overflow-y:auto;margin-bottom:14px}
+  .picker-note{
+    font-size:11.5px;color:var(--app-soft);text-align:center;margin:0 0 12px;
+    font-style:italic;
+  }
+  .bigbtn{
+    padding:16px;border-radius:8px;border:none;
+    background:var(--night);color:#fff;font-size:16px;font-weight:700;
+    font-family:inherit;cursor:pointer;width:100%;
+  }
+  .ghostbtn{
+    padding:10px;border-radius:12px;border:none;background:transparent;
+    color:var(--night-soft);font-size:13px;font-weight:500;font-family:inherit;
+    cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  }
+  .bigbtn.seal{background:var(--amber);color:#F5F2EA}
+  .outbtn{
+    padding:14px;border-radius:8px;border:1.5px solid var(--amber);
+    background:transparent;color:var(--amber);font-size:15px;font-weight:700;
+    font-family:inherit;cursor:pointer;width:100%;
+  }
+  .d-actions{display:flex;flex-direction:column;gap:10px}
+  .d-svg{touch-action:none;cursor:grab;outline:none}
+  .d-svg:focus-visible{filter:drop-shadow(0 0 4px var(--amber))}
+  .d-svg.drag{cursor:grabbing}
+  .d-hint{font-size:11px;color:var(--night-soft);text-align:center;margin:-6px 0 0}
+  .pausebox{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;padding:6px 0;width:100%}
+  .pausebox[hidden]{display:none}
+  .pb-q{font-family:var(--serif);font-size:19px;color:var(--night-ink);margin:0;line-height:1.4}
+  .pb-count{
+    font-size:48px;font-weight:200;color:var(--amber);margin:0 0 4px;
+    font-variant-numeric:tabular-nums;line-height:1.1;
+  }
+  .goodbtn{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    padding:15px;border-radius:8px;border:none;width:100%;
+    background:var(--good);color:#F5F2EA;font-size:15px;font-weight:700;
+    font-family:inherit;cursor:pointer;
+  }
+  .goodbtn svg{flex:0 0 auto}
+  .backbtn{
+    position:absolute;top:57px;left:12px;z-index:20;
+    display:flex;align-items:center;gap:5px;
+    background:none;border:none;padding:6px 8px;
+    color:var(--amber);font-size:15px;font-weight:600;font-family:inherit;
+    cursor:pointer;
+  }
+
+  /* ---------- Active screen ---------- */
+  .ringbox{display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0 0}
+  .ringbox svg{display:block}
+  .blocklist{display:flex;flex-direction:column;gap:10px}
+  .blockrow{
+    background:var(--night-2);border-radius:8px;padding:12px 14px 10px;
+    display:grid;grid-template-columns:auto 1fr auto;gap:6px 12px;align-items:center;
+    cursor:pointer;user-select:none;-webkit-user-select:none;
+  }
+  .br-icons{display:flex;gap:5px}
+  .br-icons .appicon{width:28px;height:28px;border-radius:7px;font-size:9px}
+  .br-mid{min-width:0}
+  .br-names{
+    display:block;font-size:13.5px;font-weight:600;color:var(--night-ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .br-until{font-size:11px;color:var(--night-soft);font-variant-numeric:tabular-nums}
+  .br-remain{
+    font-size:15px;font-weight:700;color:var(--amber);
+    font-variant-numeric:tabular-nums;
+  }
+  .br-bar{
+    grid-column:1/-1;height:3px;border-radius:2px;
+    background:var(--barbg,rgba(255,255,255,.12));overflow:hidden;
+  }
+  .br-bar i{display:block;height:100%;background:var(--amber);border-radius:2px}
+
+  .locked-list{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+  .locked-list .appicon{width:44px;height:44px;border-radius:11px;position:relative;filter:saturate(.4) brightness(.75)}
+  .locked-list .appicon::after{
+    content:"";position:absolute;right:-4px;bottom:-4px;width:16px;height:16px;
+    border-radius:50%;background:var(--amber);
+    box-shadow:0 0 0 3px var(--night);
+  }
+  .night-note{
+    font-size:12.5px;color:var(--night-soft);text-align:center;line-height:1.55;
+    max-width:32ch;margin:0 auto;
+  }
+  .night-note b{color:var(--night-ink);font-weight:600}
+
+  /* ---------- Unlock ---------- */
+  .codeboxes{display:flex;gap:8px;justify-content:center;margin:10px 0 2px}
+  .codeboxes input{
+    width:40px;height:52px;border-radius:11px;border:1.5px solid var(--night-2);
+    background:var(--night-2);color:var(--night-ink);font-size:24px;font-weight:700;
+    text-align:center;font-family:inherit;font-variant-numeric:tabular-nums;
+    caret-color:var(--amber);
+  }
+  .codeboxes input:focus{outline:none;border-color:var(--amber)}
+  .codeboxes.err input{border-color:var(--danger);animation:shake .3s ease}
+  @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .code-hint{font-size:11px;color:var(--night-soft);text-align:center;opacity:.7}
+
+  /* ---------- Settings ---------- */
+  .kz-setrow{
+    display:flex;align-items:center;gap:12px;padding:13px 14px;
+    border-bottom:1px solid var(--app-line);font-size:15px;color:var(--app-ink);
+  }
+  .kz-setrow:last-child{border-bottom:none}
+  .kz-setrow .kz-grow{flex:1}
+  .kz-setrow small{display:block;font-size:12px;color:var(--app-soft);margin-top:1px}
+  .kz-switch{
+    width:48px;height:29px;border-radius:15px;background:#D6CFC0;position:relative;
+    cursor:pointer;flex:0 0 auto;transition:background .2s ease;
+  }
+  .kz-switch::after{
+    content:"";position:absolute;top:2.5px;left:3px;width:24px;height:24px;
+    border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);
+    transition:left .2s ease;
+  }
+  .kz-switch[data-on="1"]{background:var(--good)}
+  .kz-switch[data-on="1"]::after{left:21px}
+  .price-tag{font-weight:700;color:var(--accent-ink);font-size:14px}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:absolute;top:66px;left:50%;transform:translate(-50%,-16px);
+    background:var(--app-ink);color:#fff;font-size:13px;font-weight:600;
+    padding:9px 16px;border-radius:20px;z-index:60;opacity:0;
+    transition:all .3s ease;pointer-events:none;white-space:nowrap;
+  }
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  /* ---------- Tabs ---------- */
+  .tabs{display:flex;gap:6px;justify-content:center;margin:22px auto 0;max-width:340px;flex-wrap:wrap}
+  .tab{
+    padding:8px 14px;border-radius:2px;border:1px solid var(--line);
+    background:transparent;color:var(--ink-soft);font-size:13px;font-weight:600;
+    font-family:inherit;cursor:pointer;letter-spacing:.03em;
+  }
+  .tab[data-on="1"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+  .tab-hint{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:10px}
+  .modeswitch{display:flex;gap:6px;justify-content:center;align-items:center;margin-top:12px}
+  .mode-label{font-size:12px;color:var(--ink-soft);margin-right:4px}
+
+  /* ---------- Notes ---------- */
+  .notes{display:flex;flex-direction:column;gap:0;max-width:60ch}
+  .note{
+    background:transparent;border:none;border-top:1px solid var(--line);
+    border-radius:0;padding:26px 4px 28px;
+  }
+  .note:last-child{border-bottom:1px solid var(--line)}
+  .note h2{
+    margin:0 0 10px;font-size:16px;font-weight:500;letter-spacing:.01em;
+    display:flex;align-items:baseline;gap:12px;
+    font-family:var(--serif);
+  }
+  .note h2 .k{
+    font-family:inherit;font-style:normal;font-weight:400;
+    color:var(--accent-ink);font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .note p{margin:0 0 8px;font-size:14px;color:var(--ink-soft)}
+  .note p:last-child{margin-bottom:0}
+  .note b{color:var(--ink);font-weight:600}
+  .note ul{margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--ink-soft)}
+  .note li{margin-bottom:5px}
+  .note li:last-child{margin-bottom:0}
+
+  /* ---------- Spec table ---------- */
+  .note .tablewrap{overflow-x:auto;margin-top:12px}
+  .note table{width:100%;border-collapse:collapse;font-size:13px}
+  .note th{
+    text-align:left;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:600;padding:6px 12px 6px 0;
+    border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  .note td{
+    padding:8px 12px 8px 0;border-bottom:1px solid var(--line);
+    vertical-align:top;color:var(--ink-soft);
+  }
+  .note td.kj{
+    font-size:23px;color:var(--ink);font-family:var(--serif);
+    line-height:1.2;white-space:nowrap;
+  }
+  .note td.rd{white-space:nowrap;font-style:italic;font-family:var(--serif)}
+
+  /* ---------- Name picker ---------- */
+  .namelist{display:flex;flex-direction:column;gap:2px;margin-top:10px}
+  .namerow{
+    display:flex;align-items:baseline;gap:6px 12px;padding:9px 12px;border-radius:2px;
+    cursor:pointer;user-select:none;-webkit-user-select:none;
+    border:1px solid transparent;border-left:2px solid transparent;flex-wrap:wrap;
+  }
+  .namerow .njp{
+    flex:0 0 auto;min-width:150px;font-family:var(--serif);
+    color:var(--ink);font-size:16px;white-space:nowrap;
+  }
+  .namerow .njp i{font-style:italic;color:var(--ink-soft);font-size:12.5px;margin-left:6px}
+  .namerow:hover{background:var(--card)}
+  .namerow[data-on="1"]{border-left-color:var(--accent);background:var(--card)}
+  .namerow .nname{font-weight:600;font-size:15px;color:var(--ink);flex:0 0 auto;min-width:110px;font-family:var(--serif)}
+  .namerow[data-on="1"] .nname{color:var(--accent-ink)}
+  .namerow .nwhy{font-size:13px;color:var(--ink-soft)}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Klickbarer Prototyp · Fachliche Spezifikation · Stand 16.07.2026</p>
+  <h1><span class="hanko" aria-hidden="true">風</span>Kaze <span style="font-weight:400;color:var(--ink-soft)">— Prototyp &amp; Spezifikation</span></h1>
+  <p class="lede">Kaze (風, der Wind) — die App, die Apps sperrt, damit du rausgehst und den Wind suchst. Links der klickbare Prototyp, rechts die fachliche Spezifikation als Grundlage für die Programmierung.</p>
+  <p class="meta-line">Der Tab „Aktiv" startet mit zwei Beispiel-Sperren (Instagram und YouTube). Demo-Entsperrcode: 4 7 1 1 4 2</p>
+
+  <div class="board">
+
+    <div class="device-col">
+      <div class="phone" data-dark-status="0" data-appmode="dark"><div class="screen"></div></div>
+      <div class="tabs" role="tablist" aria-label="Screens"></div>
+      <div class="modeswitch" role="group" aria-label="Sperr-Screens hell oder dunkel">
+        <span class="mode-label">Sperr-Screens:</span>
+        <button class="tab" data-m="dark" data-on="1">Dunkel</button>
+        <button class="tab" data-m="light" data-on="0">Hell</button>
+      </div>
+      <p class="tab-hint">Einfach durchklicken — der Prototyp funktioniert.</p>
+    </div>
+
+    <div class="notes">
+
+      <div class="note">
+        <h2>Produktkern <span class="k">ein Satz</span></h2>
+        <p><b>Kaze</b> (風, der Wind): eine bewusst einfache iPhone-App — definierte Apps für eine definierte Zahl Stunden sperren, damit man rausgeht und den Wind sucht. Der „Notfallcode" ;-) zum vorzeitigen Entblocken kommt per E-Mail und existiert nirgendwo auf dem Gerät. <b>Kostenlos und Open Source (MIT)</b> — kein Kauf, kein Abo, kein Login, keine Statistiken.</p>
+      </div>
+
+      <div class="note">
+        <h2>Name und Zeichen: Kaze 風 <span class="k">entschieden</span></h2>
+        <p><b>Kaze</b> (風, der Wind) — kurz, international aussprechbar, App-Store-tauglich, und das Zeichen erzählt die Geschichte der App: Sperre zu, geh raus, such den Wind. 風 ist zugleich die Marke: Hanko-Siegel, Schriftzug 風 KAZE, Splash und Freigabe-Toast.</p>
+        <p>Die weiteren Zeichen folgen dem <b>Wasserzeichen-System</b>: Jeder Screen trägt sein festes Zeichen als großes, dezentes Wasserzeichen rechts oben — ohne deutschen Text daneben. Es <b>bleibt beim Scrollen stehen</b> (unterhalb der Dynamic Island), der Inhalt läuft darunter durch. Die Bedeutungen stehen gesammelt auf der Unterseite <b>„Woher der Wind weht"</b> (Einstellungen → Die Zeichen).</p>
+        <div class="tablewrap">
+          <table>
+            <tr><th>Zeichen</th><th>Lesung</th><th>Bedeutung</th><th>Ort und Einsatz</th></tr>
+            <tr><td class="kj">静</td><td class="rd">shizuka</td><td>Stille, Ruhe</td><td>Einrichten — Wasserzeichen hinter „Wer soll erst mal Ruhe geben?" (umgesetzt)</td></tr>
+            <tr><td class="kj">静寂</td><td class="rd">seijaku</td><td>tiefe, wohltuende Stille</td><td>Verriegelt (Übersicht) — Wasserzeichen, vertikal gesetzt (umgesetzt)</td></tr>
+            <tr><td class="kj">時</td><td class="rd">toki</td><td>Zeit</td><td>Sperre (Detail) — Wasserzeichen hinter dem Zifferblatt (umgesetzt)</td></tr>
+            <tr><td class="kj">鍵</td><td class="rd">kagi</td><td>Schlüssel</td><td>Code-Eingabe — Wasserzeichen (umgesetzt)</td></tr>
+            <tr><td class="kj">心</td><td class="rd">kokoro</td><td>Herz, Geist</td><td>Einstellungen — Wasserzeichen (umgesetzt)</td></tr>
+            <tr><td class="kj">一息</td><td class="rd">hitoiki</td><td>ein Atemzug, kurz innehalten</td><td>Kandidat: Nachdenkpause — passt exakt zu 15 Sekunden</td></tr>
+            <tr><td class="kj">我慢</td><td class="rd">gaman</td><td>geduldiges Durchhalten</td><td>Kandidat: grüner Schild-Button / Toast „Gute Entscheidung."</td></tr>
+            <tr><td class="kj">間</td><td class="rd">ma</td><td>bewusster Zwischenraum, Pause</td><td>Kandidat: künftiger Zeitplan-Screen</td></tr>
+          </table>
+        </div>
+        <p style="margin-top:10px">Alle Zeichen — umgesetzt wie Kandidaten — stehen mit ihrer Geschichte im Glossar „Woher der Wind weht".</p>
+      </div>
+
+      <div class="note">
+        <h2>Modell: Die Sperre <span class="k">fachliche Regeln</span></h2>
+        <ul>
+          <li>Eine <b>Sperre</b> = eine Menge Apps + eine Laufzeit. Jedes „Anwenden" erzeugt eine neue Sperre; beliebig viele laufen parallel, jede mit eigener Uhr.</li>
+          <li>Eine App kann immer nur in <b>einer</b> aktiven Sperre stecken.</li>
+          <li><b>Verlängern:</b> jederzeit, sofort, ohne Hürde — nur mehr Sperre braucht keine Hürde.</li>
+          <li><b>Verkürzen / vorzeitig beenden:</b> nur mit dem Notfallcode. Pro Sperre ein eigener 6-stelliger Code in einer eigenen E-Mail; das Beenden einer Sperre lässt alle anderen weiterlaufen.</li>
+          <li><b>Ablauf:</b> Endet die Laufzeit, werden die Apps automatisch frei (Meldung „風 — … wieder frei").</li>
+          <li>Restzeiten überall in <b>h:mm</b>, minutengenau aufgerundet — keine Sekunden. Einzige Ausnahme: der 15-Sekunden-Stopper, dort sind Sekunden der Inhalt.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Screen: Splash <span class="k">erster Start des Tages</span></h2>
+        <ul>
+          <li>Erscheint <b>nur beim ersten App-Start des Tages</b> (gemerkt per Datum), sonst startet die App direkt im Einrichten.</li>
+          <li>Kurz: <b>~2,4 Sekunden</b>, dann automatischer Übergang; Antippen überspringt sofort.</li>
+          <li>Inhalt: nur <b>ein</b> Zeichen — das rote 風-Siegel mit Schriftzug KAZE und der deutschen Bedeutung „kaze — der Wind".</li>
+          <li>Fußzeile: neckarshore.ai-Logo (20 px) mit „von neckarshore.ai", MIT-Lizenz und Link aufs GitHub-Repo.</li>
+          <li>Im Prototyp jederzeit über den Tab „Start" abspielbar.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Screen: Einrichten <span class="k">Startbildschirm</span></h2>
+        <ul>
+          <li>Schriftzug <b>風 KAZE</b>; hauchzartes Wasserzeichen <b>静</b> („Stille") hinter der Überschrift.</li>
+          <li>Überschrift: <b>„Wer soll erst mal Ruhe geben?"</b></li>
+          <li><b>App-Raster</b> (3 Spalten): Antippen wählt an/ab. Ausgewählt = farbiges Icon mit Zinnober-Ring und Haken-Badge; abgewählt = ausgegraut. Apps in laufender Sperre: nicht wählbar, statt Name steht „bis HH:MM", Antippen zeigt nur einen Hinweis.</li>
+          <li><b>„+"-Kachel</b> öffnet die App-Auswahl. In der echten App zwingend Apples System-Picker (FamilyControls) — der Dialog im Mockup ist Platzhalter.</li>
+          <li><b>Dauer-Slider</b> 1–24 Std: große Stundenzahl, daneben live „frei ab HH:MM".</li>
+          <li><b>Slide-to-Lock „Anwenden":</b> Die Wisch-Geste ist die Bestätigung, kein Extra-Dialog. Ohne App-Auswahl deaktiviert („Erst App wählen"). Nach dem Zuschieben wechselt die App zur Übersicht.</li>
+          <li>Fußzeile: <b>Der „Notfallcode" ;-) zum Entblocken kommt per E-Mail.</b></li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Screen: Verriegelt <span class="k">Übersicht</span></h2>
+        <ul>
+          <li>Reine <b>Liste der aktiven Sperren</b>: App-Icons, Name(n), „frei ab HH:MM", Restzeit in Zinnober, dünner passiver Fortschrittsbalken (Restanteil der Laufzeit).</li>
+          <li>Antippen einer Sperre öffnet ihre Detail-Seite.</li>
+          <li>Outline-Button <b>„+ Weitere Apps sperren"</b> führt zum Einrichten.</li>
+          <li>Läuft keine Sperre mehr, wechselt die App automatisch zum Einrichten.</li>
+          <li>Wasserzeichen <b>静寂</b> (seijaku, tiefe Stille), vertikal gesetzt.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Screen: Sperre <span class="k">Detail, EasyPark-Vorbild</span></h2>
+        <ul>
+          <li>Zurück-Pfeil <b>„‹ Übersicht"</b> oben links (iOS-Konvention).</li>
+          <li><b>Zifferblatt:</b> Restzeit groß (h:mm) mit „Endet HH:MM", dargestellt auf einer festen <b>12-Stunden-Skala</b> mit Stunden-Ticks; über 11 Std Rest schaltet die Skala auf 24 bzw. 48 Std (Angabe unter dem Ring). So bleibt immer viel freie Strecke zum Verlängern.</li>
+          <li><b>Verlängern durch Drehen:</b> Griffpunkt am Bogenende, Ziehen im Uhrzeigersinn. Winkel = Zeit auf dem Blatt, Live-Anzeige „+X Min — Endet HH:MM", beim Loslassen auf 5 Minuten gerundet. Gegen den Uhrzeigersinn bewegt sich nichts — Verkürzen kennt der Regler physisch nicht.</li>
+          <li><b>„Entriegeln"</b> (gefüllter Zinnober-Button) startet die <b>15-Sekunden-Nachdenkpause</b>: „Willst du noch einmal drüber nachdenken?" mit Sekunden-Countdown; größte Fläche ist der grüne Schild-Button <b>„Sperre weiterlaufen lassen"</b>. Läuft der Countdown ab, öffnet sich die Code-Seite.</li>
+          <li>Wasserzeichen <b>時</b> (toki, Zeit).</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Screen: Code-Eingabe <span class="k">Entriegeln</span></h2>
+        <ul>
+          <li>Zeigt die Apps der betroffenen Sperre, ihr reguläres Ende und wohin der Code ging (maskierte E-Mail-Adresse).</li>
+          <li>Wasserzeichen <b>鍵</b> (kagi, Schlüssel).</li>
+          <li><b>6 Ziffernfelder</b> mit Auto-Weiterschaltung; falscher Code: Schütteln, Felder leeren, Hinweis.</li>
+          <li>Richtiger Code beendet <b>nur diese eine Sperre</b> — alle anderen laufen weiter.</li>
+          <li>Grüner Schild-Button <b>„Doch nicht — Sperre läuft weiter"</b> als gleichwertiger Ausweg.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Screen: Einstellungen <span class="k">Definition</span></h2>
+        <p>Sechs Abschnitte, mehr nicht. Wasserzeichen: <b>心</b> (kokoro, Herz und Geist).</p>
+        <ul>
+          <li><b>1 · Notfallcode:</b> E-Mail-Adresse (die einzige „Kontoinformation" der App), Strikter Modus (Code-Mail erst nach 10 Min Wartezeit), Partner-Modus (Code an fremde Adresse).</li>
+          <li><b>2 · Blockierung:</b> Safari-Websites mitsperren (instagram.com &amp; Co.); Zeitpläne (werktags 9–17 Uhr) vorgesehen, noch nicht spezifiziert.</li>
+          <li><b>3 · Erscheinungsbild:</b> Sperr-Screens dunkel (Sumi-Tusche, Standard) oder hell (Washi).</li>
+          <li><b>4 · Benachrichtigungen:</b> „Wenn eine Sperre endet" — <b>Standard aus</b>, Hinweis: „Benachrichtigungen stören nur die Ruhe ;-)". Einschalten erst nach <b>15 Sekunden Bedenkzeit</b> („Willst du wirklich benachrichtigt werden?"); Ausschalten sofort.</li>
+          <li><b>5 · Die Zeichen:</b> Menüpunkt <b>„Woher der Wind weht"</b> — öffnet die Glossar-Unterseite mit allen Zeichen, Lesungen und Geschichten.</li>
+          <li><b>6 · Über:</b> GitHub-Repo-Link, MIT-Lizenz, Preis-Zeile („Kostenlos. Kein Kauf, kein Abo, kein Login."), <b>Feedback-Button</b>; Fußzeile mit neckarshore.ai-Logo (24 px) und Schriftzug.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Screen: Woher der Wind weht <span class="k">Glossar-Unterseite</span></h2>
+        <ul>
+          <li>Erreichbar über Einstellungen → „Die Zeichen"; Zurück-Pfeil „‹ Einstellungen" oben links.</li>
+          <li>Liste aller Zeichen der App: großes Zeichen links, rechts Lesung, deutsche Bedeutung und eine kurze Geschichte (2–3 Sätze) — z. B. bei 間: die Sonne 日 im Torbogen 門.</li>
+          <li>Beantwortet das „What does it mean?", ohne die Screens selbst mit Text zu belasten.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Design-System: Japanese Minimal <span class="k">Gestaltung</span></h2>
+        <p>Umgesetzt als Interpretation, da die Referenzseite rauhut.com aus dieser Session nicht erreichbar war (Netzwerk-Policy) — mit dem Original-CSS wird exakt angeglichen.</p>
+        <ul>
+          <li><b>Farben:</b> Washi-Papier (#F5F2EA) als Grund, Sumi-Tusche (#211E19) als Schrift, Zinnober (#B5442C) als einziger Akzent; Sperr-Screens wahlweise dunkel (Tusche, Standard) oder hell (Washi) — beide aus denselben Token, nur die Werte kippen. Grün nur für die motivierende „Weiterlaufen"-Wahl.</li>
+          <li><b>Typografie:</b> Mincho-Serifen für Überschriften (Hiragino Mincho / Yu Mincho) — auch auf den Sperr-Screens; System-Sans für UI-Text; Ziffern mit Tabellensatz.</li>
+          <li><b>Form:</b> Hairlines statt Karten, geringe Rundungen, keine Schatten-Effekte, viel Leerraum (Ma). Icons im SF-Symbols-Stil (dünne Linie). Das Hanko-Siegel 静 („Stille") als Marke.</li>
+        </ul>
+      </div>
+
+      
+
+
+
+      <div class="note">
+        <h2>Prinzip: Reibung statt Unmöglichkeit <span class="k">warum E-Mail?</span></h2>
+        <p>Es geht nicht um <b>Unmöglichkeit</b>, sondern um <b>Reibung</b>. Der Impuls „nur kurz Instagram" überlebt selten die 60 Sekunden, die der Umweg übers Postfach kostet.</p>
+        <ul>
+          <li><b>Notausgang bleibt offen:</b> Echte Notfälle gehen immer — das senkt die Hemmung, die Sperre überhaupt zu aktivieren.</li>
+          <li><b>Strikter Modus:</b> Code-Mail kommt erst nach 10 Minuten Wartezeit.</li>
+          <li><b>Partner-Modus</b> als Ausbaustufe: Code geht an eine fremde Adresse.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <h2>Technische Realität <span class="k">iOS Screen Time API</span></h2>
+        <p>Echtes App-Blockieren läuft über Apples <b>FamilyControls / ManagedSettings / DeviceActivity</b>:</p>
+        <ul>
+          <li>Das <b>Family-Controls-Entitlement</b> muss bei Apple beantragt werden (dauert erfahrungsgemäß Wochen — früh stellen).</li>
+          <li>Die App sieht die gewählten Apps nur als <b>opake Token</b>, nicht mit Klarnamen — fürs Konzept unkritisch.</li>
+          <li>Mehrere parallele Sperren sind technisch problemlos: pro Sperre ein eigenes DeviceActivity-Schedule.</li>
+          <li>E-Mail-Versand braucht ein Mini-Backend, oder: Code wird clientseitig erzeugt, verschlüsselt gespeichert, nur die Mail kennt den Klartext.</li>
+        </ul>
+      </div>
+
+<div class="note">
+        <h2>Offene Punkte <span class="k">vor der Umsetzung klären</span></h2>
+        <ul>
+          <li>Zeitplan-Modus (werktags 9–17 Uhr automatisch): MVP oder Version 2?</li>
+          <li>Strikter Modus (10-Min-Wartezeit auf die Code-Mail): Standard an oder aus?</li>
+          <li>Zifferblatt am Gerät testen: Fühlt sich die 12-Std-Skala beim Drehen richtig an?</li>
+          <li>Edge Cases für die Umsetzung: Sperren müssen Neustart und Flugmodus überleben (lokal terminiert, nicht server-abhängig); Verhalten bei Zeitzonenwechsel definieren.</li>
+        </ul>
+      </div>
+
+      <div class="note" style="opacity:.72">
+        <h2>Anhang: Bewusst weggelassen <span class="k">out of scope — nicht umsetzen</span></h2>
+        <p><b>Ausdrücklich kein Bestandteil der Spezifikation — Negativliste, nichts hiervon bauen.</b> Die 15-€-Abo-Konkurrenz (Opal, Jomo &amp; Co.) verkauft Statistiken, Gamification und „Focus Scores". Genau das <b>nicht</b> bauen:</p>
+        <ul>
+          <li>Keine Nutzungsstatistiken, keine Wochenreports</li>
+          <li>Keine Streaks, Bäume oder Belohnungs-Tamagotchis</li>
+          <li>Kein Account, kein Login — nur eine E-Mail-Adresse als Code-Empfänger</li>
+          <li><b>Kein Geldmodell:</b> kostenlos, Open Source (MIT) — kein Abo, kein Einmalkauf</li>
+        </ul>
+      </div>
+
+      <div class="note" style="opacity:.72">
+        <h2>Anhang: Verworfene Namens-Alternativen <span class="k">out of scope — nicht umsetzen</span></h2>
+        <p><b>Ausdrücklich kein Bestandteil der Spezifikation.</b> Reines Archiv der Namensfindung — der Name ist entschieden: Kaze (風). Nichts aus dieser Liste implementieren, benennen oder referenzieren.</p>
+        <div class="namelist" id="namelist">
+          <div class="namerow" data-mark="Sperrstunde">
+            <span class="nname">Sperrstunde</span>
+            <span class="njp">門限 <i>mongen</i></span>
+            <span class="nwhy">„Sperre" + „Stunde" in einem Wort; im Wirtshaus der Moment, ab dem nichts mehr ausgeschenkt wird. — 門限 = „Torschluss-Zeit": die Stunde, bis zu der man zu Hause sein muss; das echte japanische Wort für Sperrstunde/Heimkehrzeit.</span>
+          </div>
+          <div class="namerow" data-mark="Funkstille">
+            <span class="nname">Funkstille</span>
+            <span class="njp">沈黙 <i>chinmoku</i></span>
+            <span class="nwhy">Man verordnet seinen Apps Funkstille. Ruhig, erwachsen, sofort verständlich. — 沈黙 = „Schweigen, Stille"; der Fachbegriff für Funkstille wäre 無線封止 <i>musen fūshi</i>.</span>
+          </div>
+          <div class="namerow" data-mark="Sendepause">
+            <span class="nname">Sendepause</span>
+            <span class="njp">放送休止 <i>hōsō kyūshi</i></span>
+            <span class="nwhy">Der freundlichste der Runde — Instagram hat jetzt Sendepause. — 放送休止 = „Sendeunterbrechung": der echte Begriff aus dem japanischen Fernsehen für die nächtliche Sendepause.</span>
+          </div>
+          <div class="namerow" data-mark="Funkloch">
+            <span class="nname">Funkloch</span>
+            <span class="njp">圏外 <i>kengai</i></span>
+            <span class="nwhy">Apps ins Funkloch schicken. Augenzwinkernd, sehr merkfähig. — 圏外 = „außerhalb des Bereichs": genau das steht auf jedem japanischen Handy, wenn es keinen Empfang hat.</span>
+          </div>
+          <div class="namerow" data-mark="Stubenarrest">
+            <span class="nname">Stubenarrest</span>
+            <span class="njp">外出禁止 <i>gaishutsu kinshi</i></span>
+            <span class="nwhy">Die Apps kriegen Stubenarrest. Frech — passt zum „Notfallcode" ;-) — 外出禁止 = „Ausgehverbot"; kürzer und strafender: 謹慎 <i>kinshin</i> (Hausarrest als Disziplinarmaßnahme).</span>
+          </div>
+          <div class="namerow" data-mark="Erstmal Ruhe">
+            <span class="nname">Erstmal Ruhe</span>
+            <span class="njp">まず静かに <i>mazu shizuka ni</i></span>
+            <span class="nwhy">Direkt aus dem Einrichten-Screen: „Wer soll erst mal Ruhe geben?" — wörtlich „erst einmal still"; knüpft ans Zeichen 静 an.</span>
+          </div>
+          <div class="namerow" data-mark="Riegel">
+            <span class="nname">Riegel</span>
+            <span class="njp">閂 <i>kannuki</i></span>
+            <span class="nwhy">Der frühere Arbeitstitel. — 閂 = der hölzerne Torriegel; ein einzelnes, seltenes und sehr bildhaftes Zeichen (ein Balken 一 im Tor 門).</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var CATALOG = [
+    {id:'ig', name:'Instagram', abbr:'IG', bg:'linear-gradient(135deg,#7B3FA0,#C13584,#E1902C)', visible:true,  sel:true},
+    {id:'tt', name:'TikTok',    abbr:'TT', bg:'#141418', visible:true,  sel:true},
+    {id:'yt', name:'YouTube',   abbr:'YT', bg:'#CC2B20', visible:true,  sel:false},
+    {id:'x',  name:'X',         abbr:'X',  bg:'#26282E', visible:true,  sel:false},
+    {id:'sp', name:'Spiegel',   abbr:'SP', bg:'#B03A2E', visible:true,  sel:false},
+    {id:'rd', name:'Reddit',    abbr:'RD', bg:'#D93A00', visible:false, sel:false},
+    {id:'nf', name:'Netflix',   abbr:'N',  bg:'#181818', visible:false, sel:false},
+    {id:'wa', name:'WhatsApp',  abbr:'WA', bg:'#1FAF57', visible:false, sel:false},
+    {id:'ml', name:'Mail',      abbr:'M',  bg:'#3478F6', visible:false, sel:false},
+    {id:'cc', name:'Candy Crush', abbr:'CC', bg:'#E2A03A', visible:false, sel:false}
+  ];
+
+  var phone = document.querySelector('.device-col .phone');
+  var screen = phone.querySelector('.screen');
+  var tabsEl = document.querySelector('.tabs');
+
+  /* neckarshore.ai Logo: Original-Asset aus 04-Marketing/Brand/Logos/Active, eingebettet als Data-URI */
+  var NLOGO_URI = 'data:image/png;base64,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';
+  function nlogo(size){
+    return '<img src="'+NLOGO_URI+'" width="'+size+'" height="'+size+'" alt="neckarshore.ai" style="flex:0 0 auto;border-radius:'+Math.round(size*0.22)+'px;display:block">';
+  }
+
+  /* 12 Stunden-Markierungen fürs Zifferblatt */
+  var ticks = '';
+  for(var ti=0; ti<12; ti++){
+    var ta = ti*Math.PI/6;
+    ticks += '<line x1="'+(105+79*Math.sin(ta)).toFixed(1)+'" y1="'+(105-79*Math.cos(ta)).toFixed(1)+
+             '" x2="'+(105+85*Math.sin(ta)).toFixed(1)+'" y2="'+(105-85*Math.cos(ta)).toFixed(1)+
+             '" stroke="var(--tickc)" stroke-width="2" stroke-linecap="round"/>';
+  }
+
+  screen.innerHTML =
+    '<div class="island"></div>' +
+    '<div class="statusbar"><span>9:41</span><span class="cell">&#9679;&#9679;&#9679;&#9679;&nbsp; 5G &nbsp;&#9646;&#9646;&#9646;</span></div>' +
+    '<div class="toast"></div>' +
+
+    /* Splash: nur beim ersten Start des Tages, kurz */
+    '<section class="scr nightmode" data-s="splash" style="justify-content:center;align-items:center;gap:16px">' +
+      '<div class="sp-seal" aria-hidden="true">風</div>' +
+      '<p class="sp-name">KAZE</p>' +
+      '<p class="sp-de">kaze — der Wind</p>' +
+      '<div class="sp-footer">' +
+        '<span class="sp-from">' + nlogo(20) + '<span>von <b>neckarshore.ai</b></span></span>' +
+        '<span class="sp-lic">MIT-Lizenz · <a href="https://github.com/neckarshore-mmps/kaze" target="_blank" rel="noopener">github.com/neckarshore-mmps/kaze</a></span>' +
+      '</div>' +
+    '</section>' +
+
+    /* Setup */
+    '<section class="scr on" data-s="setup">' +
+      '<span class="wm wm-top" aria-hidden="true">静</span>' +
+      '<div class="b-head">' +
+      '<p class="b-mark">風 Kaze</p>' +
+      '<h2 class="b-q">Wer soll erst mal<br>Ruhe geben?</h2></div>' +
+      '<div class="tilegrid"></div>' +
+      '<div>' +
+        '<div class="b-hours">' +
+          '<span class="num"><span class="hrs-num">4</span> <small>Std</small></span>' +
+          '<span class="endsat">frei ab 13:41</span>' +
+        '</div>' +
+        '<input type="range" class="b-range" min="1" max="24" step="1" value="4" aria-label="Dauer in Stunden">' +
+        '<div class="b-scale"><span>1</span><span>6</span><span>12</span><span>18</span><span>24</span></div>' +
+      '</div>' +
+      '<div class="slidelock" data-off="0">' +
+        '<span class="sl-text">Anwenden</span>' +
+        '<div class="sl-knob" tabindex="0" role="button" aria-label="Zum Verriegeln schieben">&#8594;</div>' +
+      '</div>' +
+      '<p class="b-caption">Der „Notfallcode" ;-) zum Entblocken kommt per E-Mail.</p>' +
+    '</section>' +
+
+    /* Active: list only */
+    '<section class="scr nightmode" data-s="active">' +
+      '<span class="wm wm-vert" aria-hidden="true">静寂</span>' +
+      '<div style="text-align:center">' +
+        '<h2 class="app-title" style="color:var(--night-ink)">Verriegelt</h2>' +
+        '<p class="app-sub blk-count" style="color:var(--night-soft)">2 Sperren aktiv</p>' +
+      '</div>' +
+      '<p class="sec-label" style="text-align:center;margin-top:14px">Aktive Sperren</p>' +
+      '<div class="blocklist"></div>' +
+      '<p class="night-note" style="margin-top:auto">Sperre antippen für Details,<br>Verlängern und Entriegeln.</p>' +
+      '<button class="outbtn btn-more">+ Weitere Apps sperren</button>' +
+    '</section>' +
+
+    /* Detail: one Sperre, EasyPark-style */
+    '<section class="scr nightmode" data-s="detail">' +
+      '<span class="wm wm-top" aria-hidden="true">時</span>' +
+      '<button class="backbtn btn-back-list" aria-label="Zurück zur Übersicht">' +
+        '<svg width="10" height="17" viewBox="0 0 10 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8,2 2,9 8,16"/></svg>' +
+        'Übersicht' +
+      '</button>' +
+      '<div style="text-align:center;margin-top:30px">' +
+        '<h2 class="app-title d-names" style="color:var(--night-ink)">Instagram</h2>' +
+        '<p class="app-sub" style="color:var(--night-soft)">Sperre läuft</p>' +
+      '</div>' +
+      '<div class="locked-list d-apps"></div>' +
+      '<div class="ringbox">' +
+        '<svg class="d-svg" width="192" height="192" viewBox="0 0 210 210" role="slider" aria-label="Sperre verlängern: Ring im Uhrzeigersinn drehen" tabindex="0">' +
+          '<circle cx="105" cy="105" r="92" fill="none" stroke="var(--night-2)" stroke-width="10"/>' +
+          ticks +
+          '<circle class="ring2" cx="105" cy="105" r="92" fill="none" stroke="var(--amber)" stroke-width="10" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="0" transform="rotate(-90 105 105)"/>' +
+          '<circle class="ring-handle" cx="105" cy="13" r="11" fill="#F5F2EA" stroke="var(--amber)" stroke-width="4"/>' +
+          '<text x="105" y="100" text-anchor="middle" fill="var(--night-ink)" font-size="44" font-weight="700" class="d-remain" style="font-variant-numeric:tabular-nums">1:52</text>' +
+          '<text x="105" y="128" text-anchor="middle" fill="var(--night-soft)" font-size="13" class="d-until" style="font-variant-numeric:tabular-nums">Endet 11:19</text>' +
+        '</svg>' +
+      '</div>' +
+      '<p class="d-hint">Zum Verlängern den Ring im Uhrzeigersinn drehen</p>' +
+      '<div class="d-actions">' +
+        '<button class="bigbtn seal btn-unlock-start">Entriegeln</button>' +
+      '</div>' +
+      '<div class="pausebox" hidden>' +
+        '<p class="pb-q">Willst du noch einmal<br>drüber nachdenken?</p>' +
+        '<p class="pb-count">15</p>' +
+        '<button class="goodbtn btn-pause-cancel">' +
+          '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+            '<path d="M12 2.5 L19.5 5.2 V11 C19.5 16.3 16.4 20 12 21.6 C7.6 20 4.5 16.3 4.5 11 V5.2 Z"/>' +
+            '<polyline points="8.6,11.6 11.1,14.1 15.4,9.6"/>' +
+          '</svg>' +
+          'Sperre weiterlaufen lassen' +
+        '</button>' +
+      '</div>' +
+      '<p class="night-note" style="margin-top:auto">Verlängern geht sofort. Entriegeln nur mit<br>dem Code aus <b>deinem Postfach</b>.</p>' +
+    '</section>' +
+
+    /* Unlock */
+    '<section class="scr nightmode" data-s="unlock">' +
+      '<span class="wm wm-top" aria-hidden="true">鍵</span>' +
+      '<div style="text-align:center">' +
+        '<h2 class="app-title" style="color:var(--night-ink)">Sicher?</h2>' +
+        '<p class="app-sub unlock-sub" style="color:var(--night-soft)">Der Code wurde um 9:41 an<br>g•••••@rauhut.com gesendet.</p>' +
+      '</div>' +
+      '<div class="locked-list unlock-apps"></div>' +
+      '<div style="margin-top:8px">' +
+        '<p class="sec-label" style="text-align:center">Code aus der E-Mail</p>' +
+        '<div class="codeboxes">' +
+          '<input inputmode="numeric" maxlength="1" aria-label="Ziffer 1">' +
+          '<input inputmode="numeric" maxlength="1" aria-label="Ziffer 2">' +
+          '<input inputmode="numeric" maxlength="1" aria-label="Ziffer 3">' +
+          '<input inputmode="numeric" maxlength="1" aria-label="Ziffer 4">' +
+          '<input inputmode="numeric" maxlength="1" aria-label="Ziffer 5">' +
+          '<input inputmode="numeric" maxlength="1" aria-label="Ziffer 6">' +
+        '</div>' +
+        '<p class="code-hint code-msg">Nur diese eine Sperre wird beendet — alle anderen laufen weiter.</p>' +
+      '</div>' +
+      '<p class="night-note" style="margin-top:auto">Kleine Hürde, große Wirkung: Bis du im Postfach bist,<br>ist der Impuls meist schon vorbei.</p>' +
+      '<button class="goodbtn btn-back-active">' +
+        '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<path d="M12 2.5 L19.5 5.2 V11 C19.5 16.3 16.4 20 12 21.6 C7.6 20 4.5 16.3 4.5 11 V5.2 Z"/>' +
+          '<polyline points="8.6,11.6 11.1,14.1 15.4,9.6"/>' +
+        '</svg>' +
+        'Doch nicht — Sperre läuft weiter' +
+      '</button>' +
+    '</section>' +
+
+    /* Settings */
+    '<section class="scr" data-s="settings">' +
+      '<span class="wm wm-top" aria-hidden="true">心</span>' +
+      '<div><h2 class="app-title">Einstellungen</h2><p class="app-sub">Einmal einrichten, dann vergessen.</p></div>' +
+      '<p class="sec-label">Notfallcode</p>' +
+      '<div class="kzcard">' +
+        '<div class="kz-setrow" style="cursor:pointer"><div class="kz-grow">E-Mail-Adresse<small>german@rauhut.com</small></div><span style="color:var(--app-soft)">&#8250;</span></div>' +
+        '<div class="kz-setrow"><div class="kz-grow">Strikter Modus<small>Code-Mail kommt erst nach 10 Min. Wartezeit</small></div><div class="kz-switch" data-on="1" role="switch" aria-checked="true" tabindex="0"></div></div>' +
+        '<div class="kz-setrow"><div class="kz-grow">Partner-Modus<small>Code geht an eine fremde Adresse (z. B. Partnerin)</small></div><div class="kz-switch" data-on="0" role="switch" aria-checked="false" tabindex="0"></div></div>' +
+      '</div>' +
+      '<p class="sec-label">Blockierung</p>' +
+      '<div class="kzcard">' +
+        '<div class="kz-setrow"><div class="kz-grow">Auch Safari-Websites sperren<small>instagram.com, tiktok.com …</small></div><div class="kz-switch" data-on="1" role="switch" aria-checked="true" tabindex="0"></div></div>' +
+        '<div class="kz-setrow"><div class="kz-grow">Zeitpläne<small>z. B. werktags 9–17 Uhr automatisch</small></div><span style="color:var(--app-soft);font-size:13px">Bald</span></div>' +
+      '</div>' +
+      '<p class="sec-label">Erscheinungsbild</p>' +
+      '<div class="kzcard">' +
+        '<div class="kz-setrow"><div class="kz-grow">Helle Sperr-Screens<small>Standard: dunkle Sumi-Tusche</small></div><div class="kz-switch sw-appmode" data-on="0" role="switch" aria-checked="false" tabindex="0"></div></div>' +
+      '</div>' +
+      '<p class="sec-label">Benachrichtigungen</p>' +
+      '<div class="kzcard">' +
+        '<div class="kz-setrow"><div class="kz-grow">Wenn eine Sperre endet<small class="notify-hint">Benachrichtigungen stören nur die Ruhe ;-)</small></div><div class="kz-switch sw-notify" data-on="0" role="switch" aria-checked="false" tabindex="0"></div></div>' +
+      '</div>' +
+      '<p class="sec-label">Die Zeichen</p>' +
+      '<div class="kzcard">' +
+        '<div class="kz-setrow row-kanji" style="cursor:pointer"><div class="kz-grow">Woher der Wind weht<small>Was die japanischen Zeichen bedeuten</small></div><span style="color:var(--app-soft)">&#8250;</span></div>' +
+      '</div>' +
+      '<p class="sec-label">Über</p>' +
+      '<div class="kzcard">' +
+        '<a class="kz-setrow" href="https://github.com/neckarshore-mmps/kaze" target="_blank" rel="noopener" style="text-decoration:none"><div class="kz-grow">GitHub-Repo<small>github.com/neckarshore-mmps/kaze</small></div><span style="color:var(--app-soft)">&#8250;</span></a>' +
+        '<div class="kz-setrow"><div class="kz-grow">Lizenz<small>MIT — Quellcode offen, frei nutzbar</small></div></div>' +
+        '<div class="kz-setrow"><div class="kz-grow">Preis<small>Kostenlos. Kein Kauf, kein Abo, kein Login.</small></div></div>' +
+      '</div>' +
+      '<button class="outbtn btn-feedback" style="border-color:var(--night);color:var(--night)">Feedback senden</button>' +
+      '<div class="brandfoot">' + nlogo(24) +
+        '<div><b>neckarshore.ai</b><br><span>Kaze ist kostenlos &amp; Open Source · <a href="https://github.com/neckarshore-mmps/kaze" target="_blank" rel="noopener">GitHub</a> · MIT</span></div>' +
+      '</div>' +
+    '</section>' +
+
+    /* Zeichen-Glossar: Unterseite der Einstellungen */
+    '<section class="scr" data-s="kanji">' +
+      '<button class="backbtn btn-back-settings" aria-label="Zurück zu den Einstellungen">' +
+        '<svg width="10" height="17" viewBox="0 0 10 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="8,2 2,9 8,16"/></svg>' +
+        'Einstellungen' +
+      '</button>' +
+      '<div style="margin-top:26px"><h2 class="app-title">Woher der Wind weht</h2>' +
+      '<p class="app-sub">Die Zeichen in Kaze und was sie bedeuten.</p></div>' +
+      '<div class="kanji-list"></div>' +
+    '</section>' +
+
+    '<div class="homebar"></div>' +
+
+    /* Picker sheet */
+    '<div class="sheet-dim dim-picker"><div class="sheet" role="dialog" aria-label="Apps hinzufügen">' +
+      '<div class="grab"></div><h3>Apps hinzufügen</h3>' +
+      '<div class="kzcard picker-list"></div>' +
+      '<p class="picker-note">In der echten App: Apples systemeigener Auswahl-Dialog (Screen Time).</p>' +
+      '<button class="bigbtn btn-picker-done" style="margin-top:0">Fertig</button>' +
+    '</div></div>';
+
+  var TABS = [
+    {s:'splash', label:'Start'},
+    {s:'setup', label:'Einrichten'},
+    {s:'active', label:'Aktiv'},
+    {s:'detail', label:'Sperre'},
+    {s:'unlock', label:'Entsperren'},
+    {s:'settings', label:'Einstellungen'}
+  ];
+  tabsEl.innerHTML = TABS.map(function(t,i){
+    return '<button class="tab" data-scr="'+t.s+'" data-on="'+(i===0?'1':'0')+'">'+t.label+'</button>';
+  }).join('');
+
+  var state = {
+    apps: CATALOG.map(function(a){ return {id:a.id,name:a.name,abbr:a.abbr,bg:a.bg,visible:a.visible,sel:a.sel}; }),
+    hours: 4,
+    blocks: [],           /* {id, appIds:[], endAt, totalMs} */
+    unlockTarget: null,
+    detailTarget: null,
+    pauseTimer: null,
+    timer: null,
+    blockSeq: 1
+  };
+
+  function q(sel){ return screen.querySelector(sel); }
+  function qa(sel,root){ return Array.prototype.slice.call((root||screen).querySelectorAll(sel)); }
+  function appById(id){ return state.apps.filter(function(a){ return a.id===id; })[0]; }
+  function isBlocked(id){
+    return state.blocks.some(function(b){ return b.appIds.indexOf(id)>=0; });
+  }
+  function blockFor(id){
+    return state.blocks.filter(function(b){ return b.appIds.indexOf(id)>=0; })[0] || null;
+  }
+  function clock(ts){
+    var d = new Date(ts);
+    return d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+  function fmt(ms){
+    /* keine Sekunden — das wäre pseudogenau; Minuten aufgerundet */
+    var totalMin = Math.ceil(ms/60000);
+    var h = Math.floor(totalMin/60);
+    var m = totalMin%60;
+    return h + ':' + String(m).padStart(2,'0');
+  }
+  function blockNames(b){
+    return b.appIds.map(function(id){ return appById(id).name; }).join(' · ');
+  }
+
+  /* ---- navigation ---- */
+  function show(s){
+    if((s==='active'||s==='detail'||s==='unlock') && state.blocks.length===0) seedDemo();
+    if(s!=='detail') resetPause();
+    if(state.splashTimer){ clearTimeout(state.splashTimer); state.splashTimer = null; }
+    if(s==='splash'){
+      state.splashTimer = setTimeout(function(){ show('setup'); }, 2400);
+    }
+    qa('.scr').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-s')===s); });
+    var dark = q('.scr[data-s="'+s+'"]').classList.contains('nightmode') ? '1':'0';
+    phone.setAttribute('data-dark-status', dark);
+    qa('.tab', tabsEl).forEach(function(t){ t.setAttribute('data-on', t.getAttribute('data-scr')===s?'1':'0'); });
+  }
+  qa('.tab', tabsEl).forEach(function(t){
+    t.addEventListener('click', function(){
+      var s = t.getAttribute('data-scr');
+      if(state.blocks.length===0 && (s==='detail'||s==='unlock'||s==='active')) seedDemo();
+      if(s==='detail'){
+        if(!state.detailTarget || !blockById(state.detailTarget)) state.detailTarget = state.blocks[0].id;
+        renderDetail();
+      }
+      if(s==='unlock'){
+        state.unlockTarget = state.detailTarget && blockById(state.detailTarget) ? state.detailTarget : state.blocks[0].id;
+        fillUnlock();
+      }
+      show(s);
+    });
+  });
+  function blockById(id){
+    return state.blocks.filter(function(b){ return b.id===id; })[0] || null;
+  }
+
+  /* ---- demo scenario: two parallel blocks ---- */
+  function seedDemo(){
+    var now = Date.now();
+    state.blocks = [
+      {id:'demo-ig', appIds:['ig'], totalMs:4*3600000, endAt: now + 1*3600000 + 52*60000},
+      {id:'demo-yt', appIds:['yt'], totalMs:2*3600000, endAt: now + 1*3600000 + 56*60000}
+    ];
+    state.apps.forEach(function(a){ if(a.id==='ig'||a.id==='yt') a.sel=false; });
+    state.detailTarget = 'demo-ig';
+    renderAll();
+    renderDetail();
+    ensureTimer();
+  }
+
+  /* ---- setup rendering ---- */
+  function selected(){
+    return state.apps.filter(function(a){ return a.visible && a.sel && !isBlocked(a.id); });
+  }
+  function iconHTML(a){
+    return '<div class="appicon" style="background:'+a.bg+'">'+a.abbr+'</div>';
+  }
+  function renderSetup(){
+    var grid = q('.tilegrid');
+    grid.innerHTML = state.apps.filter(function(a){return a.visible;}).map(function(a){
+      var blk = blockFor(a.id);
+      if(blk){
+        return '<div class="tile" data-id="'+a.id+'" data-locked="1">' +
+               iconHTML(a) + '<span class="tname">bis '+clock(blk.endAt)+'</span></div>';
+      }
+      return '<div class="tile" data-id="'+a.id+'" data-sel="'+(a.sel?'1':'0')+'">' +
+             iconHTML(a) + '<span class="tname">'+a.name+'</span></div>';
+    }).join('') +
+    '<div class="tile add"><div class="appicon">+</div><span class="tname">Hinzufügen</span></div>';
+    updateAction();
+  }
+  q('.scr[data-s="setup"]').addEventListener('click', function(e){
+    if(e.target.closest('.tile.add')){ openPicker(); return; }
+    var tile = e.target.closest('.tile[data-id]');
+    if(!tile) return;
+    var id = tile.getAttribute('data-id');
+    if(tile.getAttribute('data-locked')==='1'){
+      var blk = blockFor(id);
+      toast(appById(id).name + ' ist bis ' + clock(blk.endAt) + ' gesperrt');
+      return;
+    }
+    state.apps.forEach(function(a){ if(a.id===id) a.sel = !a.sel; });
+    renderSetup();
+  });
+
+  /* ---- duration ---- */
+  function endClock(hours){ return clock(Date.now() + hours*3600*1000); }
+  var range = q('.b-range');
+  range.addEventListener('input', function(){
+    state.hours = parseInt(range.value,10);
+    q('.hrs-num').textContent = state.hours;
+    q('.endsat').textContent = 'frei ab ' + endClock(state.hours);
+  });
+  q('.endsat').textContent = 'frei ab ' + endClock(state.hours);
+
+  /* ---- slide-to-lock ---- */
+  function updateAction(){
+    var n = selected().length;
+    var sl = q('.slidelock');
+    sl.setAttribute('data-off', n===0?'1':'0');
+    q('.sl-text').textContent = n===0 ? 'Erst App wählen' : 'Anwenden';
+  }
+  var knob = q('.sl-knob'), track = q('.slidelock');
+  var dragging = false, startX = 0, done = false;
+  function maxX(){ return track.clientWidth - knob.offsetWidth - 10; }
+  function complete(){
+    if(done) return; done = true;
+    knob.classList.remove('drag');
+    knob.style.transform = 'translateX(' + maxX() + 'px)';
+    setTimeout(function(){
+      applyBlock(); show('active');
+      knob.style.transform = ''; done = false;
+    }, 180);
+  }
+  knob.addEventListener('pointerdown', function(e){
+    if(track.getAttribute('data-off')==='1' || done) return;
+    dragging = true; startX = e.clientX;
+    knob.classList.add('drag');
+    knob.setPointerCapture(e.pointerId);
+  });
+  knob.addEventListener('pointermove', function(e){
+    if(!dragging || done) return;
+    var dx = Math.max(0, Math.min(e.clientX - startX, maxX()));
+    knob.style.transform = 'translateX(' + dx + 'px)';
+    if(dx >= maxX() - 2){ dragging = false; complete(); }
+  });
+  function release(){
+    if(!dragging) return;
+    dragging = false;
+    knob.classList.remove('drag');
+    knob.style.transform = '';
+  }
+  knob.addEventListener('pointerup', release);
+  knob.addEventListener('pointercancel', release);
+  knob.addEventListener('keydown', function(e){
+    if((e.key==='Enter'||e.key===' ') && track.getAttribute('data-off')!=='1'){
+      e.preventDefault(); complete();
+    }
+  });
+
+  /* ---- picker sheet ---- */
+  function openPicker(){
+    var rest = state.apps.filter(function(a){ return !a.visible; });
+    var list = q('.picker-list');
+    list.innerHTML = rest.length===0
+      ? '<div class="app-row"><span class="nm" style="color:var(--app-soft)">Alle Beispiel-Apps sind schon in der Auswahl.</span></div>'
+      : rest.map(function(a){
+          return '<div class="app-row picker-row" data-id="'+a.id+'" data-sel="0">' +
+                 iconHTML(a) + '<span class="nm">'+a.name+'</span><span class="tick"></span></div>';
+        }).join('');
+    q('.dim-picker').classList.add('on');
+  }
+  q('.dim-picker').addEventListener('click', function(e){
+    if(e.target===q('.dim-picker')) q('.dim-picker').classList.remove('on');
+    var row = e.target.closest('.picker-row');
+    if(row) row.setAttribute('data-sel', row.getAttribute('data-sel')==='1'?'0':'1');
+  });
+  q('.btn-picker-done').addEventListener('click', function(){
+    var added = 0;
+    qa('.picker-row', q('.dim-picker')).forEach(function(row){
+      if(row.getAttribute('data-sel')==='1'){
+        var id = row.getAttribute('data-id');
+        state.apps.forEach(function(a){ if(a.id===id){ a.visible = true; a.sel = true; added++; } });
+      }
+    });
+    q('.dim-picker').classList.remove('on');
+    renderSetup();
+    if(added>0) toast(added + (added===1?' App':' Apps') + ' hinzugefügt');
+  });
+
+  /* ---- blocks ---- */
+  function applyBlock(){
+    var apps = selected();
+    if(apps.length===0) return;
+    var totalMs = state.hours*3600000;
+    state.blocks.push({
+      id: 'b' + (state.blockSeq++),
+      appIds: apps.map(function(a){ return a.id; }),
+      totalMs: totalMs,
+      endAt: Date.now() + totalMs
+    });
+    apps.forEach(function(a){ a.sel = false; });
+    renderAll();
+    ensureTimer();
+  }
+
+  function renderActive(){
+    var n = state.blocks.length;
+    q('.blk-count').textContent = n===1 ? '1 Sperre aktiv' : n + ' Sperren aktiv';
+    var list = q('.blocklist');
+    list.innerHTML = state.blocks.map(function(b){
+      return '<div class="blockrow" data-id="'+b.id+'" role="button" tabindex="0">' +
+        '<div class="br-icons">' + b.appIds.map(function(id){ return iconHTML(appById(id)); }).join('') + '</div>' +
+        '<div class="br-mid"><span class="br-names">'+blockNames(b)+'</span>' +
+        '<span class="br-until">frei ab '+clock(b.endAt)+'</span></div>' +
+        '<span class="br-remain">–:––:––</span>' +
+        '<div class="br-bar"><i style="width:0%"></i></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderAll(){
+    renderSetup();
+    renderActive();
+    tick();
+  }
+
+  function openDetail(id){
+    state.detailTarget = id;
+    renderDetail();
+    show('detail');
+  }
+  q('.blocklist').addEventListener('click', function(e){
+    var row = e.target.closest('.blockrow');
+    if(row) openDetail(row.getAttribute('data-id'));
+  });
+  q('.blocklist').addEventListener('keydown', function(e){
+    if(e.key!=='Enter' && e.key!==' ') return;
+    var row = e.target.closest('.blockrow');
+    if(!row) return;
+    e.preventDefault();
+    openDetail(row.getAttribute('data-id'));
+  });
+  q('.btn-more').addEventListener('click', function(){ show('setup'); });
+
+  /* ---- detail screen ---- */
+  function renderDetail(){
+    var b = blockById(state.detailTarget);
+    if(!b) return;
+    q('.d-names').textContent = blockNames(b);
+    q('.d-apps').innerHTML = b.appIds.map(function(id){ return iconHTML(appById(id)); }).join('');
+    tick();
+  }
+  q('.btn-back-list').addEventListener('click', function(){ show('active'); });
+
+  /* extend by rotating the ring (EasyPark-style dial) */
+  var HOUR = 3600000;
+  function dialFor(remMs){
+    /* Zifferblatt mit Luft nach oben: 12h-Uhr, bei langen Sperren 24h/48h */
+    if(remMs <= 11*HOUR) return 12*HOUR;
+    if(remMs <= 23*HOUR) return 24*HOUR;
+    return 48*HOUR;
+  }
+  function updateDetailRing(){
+    var d = blockById(state.detailTarget);
+    if(!d) return;
+    var add = state.dragAdd || 0;
+    var rem = Math.max(0, d.endAt - Date.now());
+    var shown = rem + add;
+    var dial = ringDrag.on ? ringDrag.dial : dialFor(rem);
+    q('.d-remain').textContent = fmt(shown);
+    q('.d-until').textContent = add>0
+      ? '+' + Math.round(add/60000) + ' Min — Endet ' + clock(d.endAt + add)
+      : 'Endet ' + clock(d.endAt);
+    q('.d-hint').textContent = 'Zifferblatt: ' + (dial/HOUR) + ' Std — zum Verlängern im Uhrzeigersinn drehen';
+    var frac = Math.min(1, shown/dial);
+    q('.ring2').setAttribute('stroke-dashoffset', String(578*(1-frac)));
+    var th = frac*2*Math.PI;
+    var h = q('.ring-handle');
+    h.setAttribute('cx', String(105 + 92*Math.sin(th)));
+    h.setAttribute('cy', String(105 - 92*Math.cos(th)));
+  }
+  var dsvg = q('.d-svg');
+  var ringDrag = {on:false, prev:0, dial:12*HOUR, acc:0, base:0};
+  function svgAngle(e){
+    var r = dsvg.getBoundingClientRect();
+    var dx = e.clientX - (r.left + r.width/2);
+    var dy = e.clientY - (r.top + r.height/2);
+    var a = Math.atan2(dx, -dy) * 180/Math.PI; /* 0 Grad oben, im Uhrzeigersinn */
+    return (a+360)%360;
+  }
+  dsvg.addEventListener('pointerdown', function(e){
+    var d = blockById(state.detailTarget);
+    if(!d) return;
+    var rem = Math.max(0, d.endAt - Date.now());
+    ringDrag.on = true;
+    ringDrag.prev = svgAngle(e);
+    ringDrag.dial = dialFor(rem);
+    ringDrag.base = rem/ringDrag.dial*360;  /* Winkel der aktuellen Restzeit */
+    ringDrag.acc = ringDrag.base;
+    state.dragAdd = 0;
+    dsvg.classList.add('drag');
+    dsvg.setPointerCapture(e.pointerId);
+  });
+  dsvg.addEventListener('pointermove', function(e){
+    if(!ringDrag.on) return;
+    var a = svgAngle(e);
+    var delta = a - ringDrag.prev;
+    if(delta>180) delta -= 360;
+    if(delta<-180) delta += 360;
+    ringDrag.prev = a;
+    /* Winkel direkt = Zeit auf dem Zifferblatt; nur vorwärts, maximal voll */
+    ringDrag.acc = Math.min(360, Math.max(ringDrag.base, ringDrag.acc + delta));
+    state.dragAdd = (ringDrag.acc - ringDrag.base)/360*ringDrag.dial;
+    updateDetailRing();
+  });
+  function ringDragEnd(){
+    if(!ringDrag.on) return;
+    ringDrag.on = false;
+    dsvg.classList.remove('drag');
+    var add = Math.round((state.dragAdd||0)/300000)*300000; /* auf 5 Min gerundet */
+    state.dragAdd = 0;
+    var d = blockById(state.detailTarget);
+    if(d && add>0){
+      d.endAt += add; d.totalMs += add;
+      renderAll();
+      toast('Verlängert — bis ' + clock(d.endAt));
+    }
+    updateDetailRing();
+  }
+  dsvg.addEventListener('pointerup', ringDragEnd);
+  dsvg.addEventListener('pointercancel', ringDragEnd);
+  dsvg.addEventListener('keydown', function(e){
+    var d = blockById(state.detailTarget);
+    if(!d) return;
+    if(e.key==='ArrowUp'||e.key==='ArrowRight'){
+      e.preventDefault();
+      d.endAt += 300000; d.totalMs += 300000;
+      renderAll();
+      toast('Verlängert — bis ' + clock(d.endAt));
+      updateDetailRing();
+    }
+  });
+
+  /* 15s reflection stopper before unlocking */
+  function resetPause(){
+    if(state.pauseTimer){ clearInterval(state.pauseTimer); state.pauseTimer = null; }
+    var pb = q('.pausebox');
+    pb.hidden = true;
+    q('.d-actions').style.display = '';
+  }
+  q('.btn-unlock-start').addEventListener('click', function(){
+    if(state.pauseTimer) return;
+    var left = 15;
+    q('.pb-count').textContent = left;
+    q('.pausebox').hidden = false;
+    q('.d-actions').style.display = 'none';
+    state.pauseTimer = setInterval(function(){
+      left--;
+      q('.pb-count').textContent = Math.max(0,left);
+      if(left<=0){
+        resetPause();
+        state.unlockTarget = state.detailTarget;
+        fillUnlock();
+        show('unlock');
+      }
+    }, 1000);
+  });
+  q('.btn-pause-cancel').addEventListener('click', function(){
+    resetPause();
+    toast('Gute Entscheidung.');
+  });
+
+  /* ---- ticking ---- */
+  function ensureTimer(){
+    if(state.timer) return;
+    state.timer = setInterval(tick, 1000);
+  }
+  function tick(){
+    if(state.blocks.length===0) return;
+    var now = Date.now();
+    var expired = [];
+    state.blocks.forEach(function(b){
+      var left = Math.max(0, b.endAt - now);
+      if(left<=0){ expired.push(b); return; }
+      var row = q('.blockrow[data-id="'+b.id+'"]');
+      if(row){
+        row.querySelector('.br-remain').textContent = fmt(left);
+        row.querySelector('.br-bar i').style.width = String(Math.round((left/b.totalMs)*100)) + '%';
+      }
+    });
+    expired.forEach(function(b){
+      state.blocks = state.blocks.filter(function(x){ return x.id!==b.id; });
+      toast('風 — ' + blockNames(b) + ' wieder frei');
+    });
+    if(expired.length){
+      renderAll();
+      var onDetail = q('.scr[data-s="detail"]').classList.contains('on');
+      var onUnlock = q('.scr[data-s="unlock"]').classList.contains('on');
+      var onActive = q('.scr[data-s="active"]').classList.contains('on');
+      if((onDetail||onUnlock) && !blockById(state.detailTarget)){
+        show(state.blocks.length>0 ? 'active' : 'setup');
+      } else if(onActive && state.blocks.length===0){
+        show('setup');
+      }
+      return;
+    }
+    /* detail ring */
+    updateDetailRing();
+  }
+
+  /* ---- unlock ---- */
+  function fillUnlock(){
+    var b = state.blocks.filter(function(x){ return x.id===state.unlockTarget; })[0];
+    if(!b) return;
+    q('.unlock-apps').innerHTML = b.appIds.map(function(id){ return iconHTML(appById(id)); }).join('');
+    q('.unlock-sub').innerHTML = 'Diese Sperre läuft sonst bis ' + clock(b.endAt) + '.<br>Der Code ging an g•••••@rauhut.com.';
+    q('.code-msg').textContent = 'Nur diese eine Sperre wird beendet — alle anderen laufen weiter.';
+  }
+  q('.btn-back-active').addEventListener('click', function(){
+    show(blockById(state.detailTarget) ? 'detail' : 'active');
+  });
+
+  var boxes = qa('.codeboxes input');
+  boxes.forEach(function(inp, i){
+    inp.addEventListener('input', function(){
+      inp.value = inp.value.replace(/\D/g,'').slice(0,1);
+      if(inp.value && i<boxes.length-1) boxes[i+1].focus();
+      var code = boxes.map(function(b){return b.value;}).join('');
+      if(code.length===6){
+        if(code==='471142'){
+          boxes.forEach(function(b){ b.value=''; });
+          var b = state.blocks.filter(function(x){ return x.id===state.unlockTarget; })[0];
+          state.blocks = state.blocks.filter(function(x){ return x.id!==state.unlockTarget; });
+          state.unlockTarget = null;
+          state.detailTarget = null;
+          renderAll();
+          if(state.blocks.length>0){ show('active'); }
+          else { show('setup'); }
+          toast(b ? blockNames(b) + ' entriegelt' : 'Entriegelt');
+        } else {
+          q('.codeboxes').classList.add('err');
+          q('.code-msg').textContent = 'Falscher Code. Schau nochmal in die E-Mail. (Demo: 471142)';
+          setTimeout(function(){
+            q('.codeboxes').classList.remove('err');
+            boxes.forEach(function(b){ b.value=''; });
+            boxes[0].focus();
+          }, 600);
+        }
+      }
+    });
+    inp.addEventListener('keydown', function(e){
+      if(e.key==='Backspace' && !inp.value && i>0) boxes[i-1].focus();
+    });
+  });
+
+  /* ---- Benachrichtigungen: Default aus, Einschalten nur mit 15s Bedenkzeit ---- */
+  var notifyTimer = null;
+  var swN = q('.sw-notify');
+  var notifyHint = q('.notify-hint');
+  var NOTIFY_DEFAULT = 'Benachrichtigungen stören nur die Ruhe ;-)';
+  function cancelNotifyCountdown(){
+    if(notifyTimer){ clearInterval(notifyTimer); notifyTimer = null; }
+    notifyHint.textContent = NOTIFY_DEFAULT;
+  }
+  function notifyTap(){
+    if(swN.getAttribute('data-on')==='1'){
+      swN.setAttribute('data-on','0'); swN.setAttribute('aria-checked','false');
+      cancelNotifyCountdown();
+      toast('Gute Entscheidung.');
+      return;
+    }
+    if(notifyTimer){ cancelNotifyCountdown(); return; }
+    var left = 15;
+    notifyHint.textContent = 'Willst du wirklich benachrichtigt werden? … ' + left;
+    notifyTimer = setInterval(function(){
+      left--;
+      if(left<=0){
+        clearInterval(notifyTimer); notifyTimer = null;
+        swN.setAttribute('data-on','1'); swN.setAttribute('aria-checked','true');
+        notifyHint.textContent = NOTIFY_DEFAULT;
+        toast('Benachrichtigungen an');
+        return;
+      }
+      notifyHint.textContent = 'Willst du wirklich benachrichtigt werden? … ' + left;
+    }, 1000);
+  }
+  swN.addEventListener('click', notifyTap);
+  swN.addEventListener('keydown', function(e){
+    if(e.key===' '||e.key==='Enter'){ e.preventDefault(); notifyTap(); }
+  });
+
+  /* ---- switches ---- */
+  qa('.kz-switch').forEach(function(sw){
+    if(sw.classList.contains('sw-notify')) return;
+    function flip(){
+      var on = sw.getAttribute('data-on')==='1' ? '0':'1';
+      sw.setAttribute('data-on', on);
+      sw.setAttribute('aria-checked', on==='1'?'true':'false');
+    }
+    sw.addEventListener('click', flip);
+    sw.addEventListener('keydown', function(e){
+      if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); }
+    });
+  });
+
+  /* ---- Kanji-Momente ---- */
+  var KANJI = [
+    {kj:'静', yomi:'shizuka', de:'die Stille', story:'Das Zeichen verbindet 青 (klar, blaugrün) mit 争 (ringen): Stille ist nichts Passives, sondern errungene Ruhe. Darum steht es als Wasserzeichen über dem Einrichten — Ruhe ist eine Entscheidung.'},
+    {kj:'間', yomi:'ma', de:'der Zwischenraum', story:'Die Sonne 日 im Torbogen 門: der Moment, in dem Licht durch den Spalt fällt. Ma ist der bewusste Zwischenraum, der Musik, Architektur und Gespräche atmen lässt. Genau diesen Raum schafft dir die Sperre.'},
+    {kj:'静寂', yomi:'seijaku', de:'die tiefe Stille', story:'Die Stille nach dem letzten Ton. In der Teezeremonie einer der vier Grundwerte: Harmonie, Respekt, Reinheit — und Stille (和敬清寂).'},
+    {kj:'時', yomi:'toki', de:'die Zeit', story:'Sonne 日 und Tempel 寺: Zeit wurde einst am Tempel gemessen. Es erinnert daran, dass die Stunden dir gehören — nicht den Apps.'},
+    {kj:'一息', yomi:'hitoiki', de:'ein Atemzug', story:'Wörtlich „ein Atem": die kleinste Einheit der Ruhe. Die 15 Sekunden Nachdenkpause sind genau das — einmal tief durchatmen, bevor du entscheidest.'},
+    {kj:'我慢', yomi:'gaman', de:'das Durchhalten', story:'Geduldiges Ausharren mit Würde — eine der stillen Tugenden Japans. Jede Stunde, die deine Sperre hält, ist ein kleines Gaman.'},
+    {kj:'鍵', yomi:'kagi', de:'der Schlüssel', story:'Metall 金 mit dem Zeichen für Verschließen: der Schlüssel. Deiner liegt bewusst nicht auf diesem Gerät, sondern in deinem Postfach.'},
+    {kj:'風', yomi:'kaze', de:'der Wind', story:'Der Namensgeber der App. Wind ist das, was draußen weht, während du drinnen scrollst. Sperre zu — geh raus, such den Wind.'},
+    {kj:'心', yomi:'kokoro', de:'Herz und Geist', story:'Das stilisierte Herz: in Japan Sitz von Gefühl und Verstand zugleich. Gute Werkzeuge dienen dem Kokoro, statt es zu füttern.'}
+  ];
+  /* Glossar-Seite rendern + Navigation */
+  q('.kanji-list').innerHTML = KANJI.map(function(k){
+    return '<div class="kanji-row">' +
+      '<span class="kr-kj">'+k.kj+'</span>' +
+      '<div class="kr-body"><b>'+k.yomi+' — '+k.de+'</b><p>'+k.story+'</p></div>' +
+    '</div>';
+  }).join('');
+  q('.row-kanji').addEventListener('click', function(){ show('kanji'); });
+  q('.btn-back-settings').addEventListener('click', function(){ show('settings'); });
+
+  /* ---- Hell/Dunkel fuer die Sperr-Screens ---- */
+  var modeBtns = Array.prototype.slice.call(document.querySelectorAll('.modeswitch .tab'));
+  function setAppMode(m){
+    phone.setAttribute('data-appmode', m);
+    modeBtns.forEach(function(b){ b.setAttribute('data-on', b.getAttribute('data-m')===m?'1':'0'); });
+    var sw = q('.sw-appmode');
+    sw.setAttribute('data-on', m==='light'?'1':'0');
+    sw.setAttribute('aria-checked', m==='light'?'true':'false');
+  }
+  modeBtns.forEach(function(b){
+    b.addEventListener('click', function(){ setAppMode(b.getAttribute('data-m')); });
+  });
+  q('.sw-appmode').addEventListener('click', function(){
+    setAppMode(q('.sw-appmode').getAttribute('data-on')==='1' ? 'light' : 'dark');
+  });
+  q('.sw-appmode').addEventListener('keydown', function(e){
+    if(e.key===' '||e.key==='Enter'){
+      setAppMode(q('.sw-appmode').getAttribute('data-on')==='1' ? 'light' : 'dark');
+    }
+  });
+
+  /* ---- toast ---- */
+  var toastTimer = null;
+  function toast(msg){
+    var t = q('.toast'); t.textContent = msg; t.classList.add('on');
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('on'); }, 3200);
+  }
+
+  renderAll();
+
+  q('.scr[data-s="splash"]').addEventListener('click', function(e){
+    if(e.target.closest('a')) return; /* Lizenz-Link nicht als Skip werten */
+    show('setup');
+  });
+  q('.btn-feedback').addEventListener('click', function(){
+    toast('Im echten Produkt: E-Mail an feedback@neckarshore.ai');
+  });
+
+  /* Splash nur beim ersten Start des Tages */
+  var today = new Date().toDateString();
+  var seen = null;
+  try{ seen = localStorage.getItem('kaze-splash-date'); }catch(err){}
+  if(seen !== today){
+    try{ localStorage.setItem('kaze-splash-date', today); }catch(err){}
+    show('splash');
+  } else {
+    show('setup');
+  }
+})();
+</script>
