@@ -2,6 +2,8 @@
 
 Stand: 2026-07-16. Diese Spezifikation ist die Programmier-Grundlage; sie beschreibt den Ist-Stand des Konzepts (keine Änderungshistorie). Der klickbare HTML-Prototyp (`mockup/`) zeigt jedes beschriebene Verhalten zum Anfassen.
 
+> **Diagramme:** Drei Mermaid-Diagramme — Sperr-Lebenszyklus, Screen-Flow und Notfallcode-Sequenz — visualisieren diese Spezifikation und machen eine offene Architekturentscheidung sichtbar: [diagramme.md](diagramme.md).
+
 ## 1. Produktkern
 
 Kaze (風, der Wind): eine bewusst einfache iPhone-App — definierte Apps für eine definierte Zahl Stunden sperren, damit man rausgeht und den Wind sucht. Der „Notfallcode" ;-) zum vorzeitigen Entblocken kommt per E-Mail und existiert nirgendwo auf dem Gerät. Kostenlos und Open Source (MIT) — kein Kauf, kein Abo, kein Login, keine Statistiken.

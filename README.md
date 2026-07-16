@@ -8,6 +8,8 @@ Kaze ist eine bewusst einfache iPhone-App: definierte Apps für eine definierte 
 
 Ein Projekt von [neckarshore.ai](https://neckarshore.ai).
 
+**▶ Mockup ausprobieren:** [`mockup/kaze-mockup.html`](mockup/kaze-mockup.html) — der komplette Flow als klickbarer Prototyp. Eine Datei, keine Installation. Datei herunterladen und im Browser öffnen (GitHub zeigt HTML als Quelltext, nicht gerendert).
+
 ---
 
 ## Die App in Bildern
@@ -60,10 +62,13 @@ kaze/
 ├── LICENSE                — MIT
 ├── docs/
 │   ├── spec.md            — fachliche Spezifikation (Programmier-Grundlage)
+│   ├── diagramme.md       — drei Mermaid-Diagramme (Lebenszyklus, Screen-Flow, Notfallcode)
 │   └── screens/           — Screenshots aller Screens
 └── mockup/
     └── kaze-mockup.html   — klickbarer Prototyp (einfach im Browser öffnen)
 ```
+
+Die drei Mermaid-Diagramme (Sperr-Lebenszyklus, Screen-Flow, Notfallcode-Sequenz) ergänzen die Spezifikation: [docs/diagramme.md](docs/diagramme.md).
 
 ## Mockup ausprobieren
 
