@@ -60,10 +60,13 @@ kaze/
 ├── LICENSE                — MIT
 ├── docs/
 │   ├── spec.md            — fachliche Spezifikation (Programmier-Grundlage)
+│   ├── diagramme.md       — drei Mermaid-Diagramme (Lebenszyklus, Screen-Flow, Notfallcode)
 │   └── screens/           — Screenshots aller Screens
 └── mockup/
     └── kaze-mockup.html   — klickbarer Prototyp (einfach im Browser öffnen)
 ```
+
+Die drei Mermaid-Diagramme (Sperr-Lebenszyklus, Screen-Flow, Notfallcode-Sequenz) ergänzen die Spezifikation: [docs/diagramme.md](docs/diagramme.md).
 
 ## Mockup ausprobieren
 
