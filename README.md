@@ -8,7 +8,7 @@ Kaze ist eine bewusst einfache iPhone-App: definierte Apps für eine definierte 
 
 Ein Projekt von [neckarshore.ai](https://neckarshore.ai).
 
-**▶ Mockup ausprobieren:** [`mockup/kaze-mockup.html`](mockup/kaze-mockup.html) — der komplette Flow als klickbarer Prototyp. Eine Datei, keine Installation. Datei herunterladen und im Browser öffnen (GitHub zeigt HTML als Quelltext, nicht gerendert).
+**▶ [Mockup live ansehen](https://neckarshore-mmps.github.io/kaze/mockup/kaze-mockup.html)** — der komplette Flow als klickbarer Prototyp, direkt im Browser. Keine Installation. ([Quelltext](mockup/kaze-mockup.html))
 
 ---
 
